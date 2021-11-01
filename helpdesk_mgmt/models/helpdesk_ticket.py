@@ -22,6 +22,12 @@ class HelpdeskTicket(models.Model):
         stage_ids = self.env["helpdesk.ticket.stage"].search([])
         return stage_ids
 
+    def _get_user_domain(self):
+        res = "[]"
+        if not self.team_id:
+            return res
+        return "[('id', 'in', self.user_ids)]"
+
     number = fields.Char(string="Ticket number", default="/", readonly=True)
     name = fields.Char(string="Title", required=True)
     description = fields.Html(required=True, sanitize_style=True)
@@ -126,6 +132,11 @@ class HelpdeskTicket(models.Model):
             self.partner_name = self.partner_id.name
             self.partner_email = self.partner_id.email
             self.partner_lang = self.partner_id.lang
+
+    @api.onchange("team_id", "user_id")
+    def _onchange_dominion_user_id(self):
+        if self.user_id and self.user_ids and self.user_id not in self.team_id.user_ids:
+            self.update({"user_id": False})
 
     # ---------------------------------------------------
     # CRUD
