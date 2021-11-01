@@ -22,6 +22,12 @@ class HelpdeskTicket(models.Model):
         stage_ids = self.env["helpdesk.ticket.stage"].search([])
         return stage_ids
 
+    def _get_user_domain(self):
+        res = "[]"
+        if not self.team_id:
+            return res
+        return "[('id', 'in', self.user_ids)]"
+
     number = fields.Char(string="Ticket number", default="/", readonly=True)
     name = fields.Char(string="Title", required=True)
     description = fields.Html(required=True, sanitize_style=True)
