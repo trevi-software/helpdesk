@@ -131,7 +131,11 @@ class HelpdeskTicket(models.Model):
         if self.partner_id:
             self.partner_name = self.partner_id.name
             self.partner_email = self.partner_id.email
-            self.partner_lang = self.partner_id.lang
+
+    @api.onchange("team_id", "user_id")
+    def _onchange_dominion_user_id(self):
+        if self.user_id and self.user_ids and self.user_id not in self.team_id.user_ids:
+            self.update({"user_id": False})
 
     # ---------------------------------------------------
     # CRUD
@@ -207,7 +211,7 @@ class HelpdeskTicket(models.Model):
                     "subtype_id": self.env["ir.model.data"].xmlid_to_res_id(
                         "mail.mt_note"
                     ),
-                    "email_layout_xmlid": "mail.mail_notification_light",
+                    "email_layout_xmlid": "mail.mail_notification_paynow",
                 },
             )
         return res
@@ -224,11 +228,26 @@ class HelpdeskTicket(models.Model):
             "description": msg.get("body"),
             "partner_email": msg.get("from"),
             "partner_id": msg.get("author_id"),
+            "channel_id": self.env.ref("helpdesk_mgmt.helpdesk_ticket_channel_email").id,
         }
         defaults.update(custom_values)
 
         # Write default values coming from msg
         ticket = super().message_new(msg, custom_values=defaults)
+
+        if ticket.partner_id:
+            # If we have a partner trigger the partner onchange function
+            ticket._onchange_partner_id()
+
+            # Send acknowledgement email only if we have a partner. We don't
+            # want to send a response to just any address that sends us an
+            # email. Send the message as the system user because Odoo won't
+            # send an email to the author of a message.
+            ticket.send_message(
+                self.env.ref("helpdesk_mgmt.new_ticket_template"),
+                notif_layout="mail.mail_notification_paynow",
+                system_author=True,
+            )
 
         # Use mail gateway tools to search for partners to subscribe
         email_list = tools.email_split(
