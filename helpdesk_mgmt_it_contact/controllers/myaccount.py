@@ -17,13 +17,14 @@ class CustomerPortalHelpdesk(CustomerPortalHelpdesk):
         domain = [("partner_id", "child_of", partner.id)]
         if partner.it_contact and partner.parent_id:
             domain = [("partner_id", "child_of", partner.commercial_partner_id.id)]
-        ticket_count = request.env["helpdesk.ticket"].search_count(domain)
-        values["ticket_count"] = ticket_count
+            ticket_count = request.env["helpdesk.ticket"].search_count(domain)
+            values["ticket_count"] = ticket_count
         return values
 
     # XXX - copy this entire function form helpdesk_mgmt/controllers/myaccount.py
     # just to override the domain variable. We should submit a PR to OCA/helpdesk
     # to add a hook: def _get_ticket_domain().
+    # 2021-11-19 - added a slight re-factor to the ticket listing
     #
     @http.route(
         ["/my/tickets", "/my/tickets/page/<int:page>"],
@@ -42,6 +43,7 @@ class CustomerPortalHelpdesk(CustomerPortalHelpdesk):
             domain = [("partner_id", "child_of", partner.commercial_partner_id.id)]
 
         searchbar_sortings = {
+            'number': {'label': _('Reference'), 'order': 'number desc'},
             "date": {"label": _("Newest"), "order": "create_date desc"},
             "name": {"label": _("Name"), "order": "name"},
             "stage": {"label": _("Stage"), "order": "stage_id"},
@@ -50,16 +52,12 @@ class CustomerPortalHelpdesk(CustomerPortalHelpdesk):
                 "order": "last_stage_update desc",
             },
         }
-        searchbar_filters = {"all": {"label": _("All"), "domain": []}}
-        for stage in request.env["helpdesk.ticket.stage"].search([]):
-            searchbar_filters.update(
-                {
-                    str(stage.id): {
-                        "label": stage.name,
-                        "domain": [("stage_id", "=", stage.id)],
-                    }
-                }
-            )
+        # search filters
+        searchbar_filters = {
+            'all': {'label': _('All'), 'domain': []},
+            'open': {'label': _('Open'), 'domain': [('closed_date', '=', False)]},
+            'closed': {'label': _('Closed'), 'domain': [('closed_date', '!=', False)]},
+        }
 
         # default sort by order
         if not sortby:

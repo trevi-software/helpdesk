@@ -12,6 +12,7 @@
     "depends": ["helpdesk_mgmt", "partner_contact_it"],
     "data": [
         "security/helpdesk_security.xml",
+        "views/helpdesk_ticket_templates.xml",
     ],
     "demo": [],
     "application": True,
