@@ -44,6 +44,11 @@ Configuration
 
 There is no need to do anything to configure this module
 
+**Table of contents**
+
+.. contents::
+   :local:
+
 Usage
 =====
 
@@ -86,6 +91,30 @@ Contributors
 * Open Source Integrators <contact@opensourceintegrators.com>
 * Serpent Consulting Services Pvt. Ltd. <support@serpentcs.com>
 * Marcel Savegnago <marcel.savegnago@escodoo.com.br>
+
+Maintainers
+~~~~~~~~~~~
+
+This module is maintained by the OCA.
+
+.. image:: https://odoo-community.org/logo.png
+   :alt: Odoo Community Association
+   :target: https://odoo-community.org
+
+OCA, or the Odoo Community Association, is a nonprofit organization whose
+mission is to support the collaborative development of Odoo features and
+promote its widespread use.
+
+This module is part of the `OCA/helpdesk <https://github.com/OCA/helpdesk/tree/14.0/helpdesk_mgmt_fieldservice>`_ project on GitHub.
+
+You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.
+
+Other credits
+~~~~~~~~~~~~~
+
+* Bhavesh Odedra <bodedra@opensourceintegrators.com>
+* Raphael Lee <rlee@opensourceintegrators.com>
+* Freni Patel <fpatel@opensourceintegrators.com>
 
 Maintainers
 ~~~~~~~~~~~
