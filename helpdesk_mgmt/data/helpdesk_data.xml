@@ -133,7 +133,8 @@
                                 <td>${object.priority}</td>
                             </tr>
                         </table>
-                    </td>
+                      </td>
+                    </tr>
                 <tr><td colspan="2">New stage: ${object.stage_id.name}</td></tr>
                 </table>
 </div>
